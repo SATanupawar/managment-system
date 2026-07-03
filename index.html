@@ -72,55 +72,50 @@
 
   /* ── APP SHELL ── */
   #app { display: none; }
-  .sidebar {
-    position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
-    background: #fff; border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; z-index: 100;
-    box-shadow: 2px 0 16px rgba(99,102,241,.06);
+  .app-header {
+    position: fixed; top: 0; left: 0; right: 0; height: 56px;
+    background: #fff; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px; padding: 0 16px; z-index: 150;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
   }
-  .sidebar-logo {
-    padding: 20px 20px 18px; font-size: 18px; font-weight: 800;
+  .app-logo {
+    font-size: 17px; font-weight: 800; flex-shrink: 0;
     background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    letter-spacing: -.5px; border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
   }
-  .sidebar-logo span { font-weight: 400; color: var(--muted); font-size: 11px; display: block; margin-top: 2px; -webkit-text-fill-color: var(--muted); }
-  .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
-  .nav-section {
-    padding: 14px 16px 6px; font-size: 10px; font-weight: 700;
-    color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px;
+  .top-nav {
+    display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
   }
-  .nav-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px; margin: 2px 8px;
-    border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--muted); transition: all .15s;
+  .top-nav-item {
+    padding: 8px 14px; border: none; background: transparent; border-radius: 8px;
+    font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; white-space: nowrap;
+    transition: all .15s;
   }
-  .nav-item:hover { background: #f1f5f9; color: var(--text); }
-  .nav-item.active { background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(236,72,153,.08)); color: var(--accent2); font-weight: 600; border-left: 3px solid var(--accent); }
-  .nav-item-left { display: flex; align-items: center; gap: 10px; }
-  .nav-badge {
-    background: var(--accent); color: #fff; font-size: 10px; font-weight: 700;
-    padding: 2px 7px; border-radius: 99px; min-width: 20px; text-align: center;
+  .top-nav-item:hover { background: #f1f5f9; color: var(--text); }
+  .top-nav-item.active {
+    background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(236,72,153,.08));
+    color: var(--accent2);
   }
-  .nav-badge.green { background: var(--green); }
-  .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); flex-shrink: 0; background: #fafbff; }
-  .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .user-avatar {
-    width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+  .header-page-title {
+    display: none; flex: 1; font-size: 16px; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .user-details { min-width: 0; }
-  .user-email  { font-size: 12px; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .user-role   { font-size: 11px; color: var(--muted); }
-  .logout-btn {
-    width: 100%; padding: 9px; background: #fff; border: 1px solid var(--border);
-    border-radius: 8px; color: var(--muted); font-size: 13px; cursor: pointer; transition: all .2s;
+  .app-header-right {
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: auto;
   }
-  .logout-btn:hover { background: #fef2f2; color: var(--red); border-color: #fecaca; }
+  .header-user {
+    font-size: 12px; color: var(--muted); max-width: 140px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .logout-btn-header {
+    padding: 8px 14px; background: #fff; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s; white-space: nowrap;
+  }
+  .logout-btn-header:hover { background: #fef2f2; color: var(--red); border-color: #fecaca; }
 
   /* ── MAIN CONTENT ── */
-  .main { margin-left: 240px; padding: 32px; min-height: 100vh; }
+  .main { margin-left: 0; padding: 72px 32px 32px; min-height: 100vh; }
   .page { display: none; }
   .page.active { display: block; animation: fadeIn .2s ease; }
   @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
@@ -336,25 +331,7 @@
 
   .recent-tag { background: #ede9fe; color: var(--purple); font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 600; }
 
-  /* ── MOBILE HEADER & NAV ── */
-  .mobile-header {
-    display: none;
-    position: fixed; top: 0; left: 0; right: 0; height: 56px;
-    background: #fff; border-bottom: 1px solid var(--border);
-    align-items: center; gap: 12px; padding: 0 16px; z-index: 150;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04);
-  }
-  .menu-btn {
-    width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border);
-    background: #f8fafc; color: var(--text); font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .mobile-header-title { font-size: 16px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sidebar-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(15,23,42,.35);
-    z-index: 110; backdrop-filter: blur(2px);
-  }
-  .sidebar-overlay.open { display: block; }
+  /* ── BOTTOM NAV (mobile) ── */
   .bottom-nav {
     display: none; position: fixed; bottom: 0; left: 0; right: 0;
     background: #fff; border-top: 1px solid var(--border);
@@ -379,17 +356,11 @@
 
   /* ── MOBILE ── */
   @media (max-width: 768px) {
-    .mobile-header { display: flex; }
+    .top-nav { display: none; }
+    .header-page-title { display: block; }
+    .header-user { display: none; }
     .bottom-nav { display: block; }
-    .sidebar {
-      transform: translateX(-100%);
-      transition: transform .25s ease;
-      width: 280px; max-width: 85vw;
-      box-shadow: 4px 0 24px rgba(0,0,0,.4);
-    }
-    .sidebar.open { transform: translateX(0); }
     .main {
-      margin-left: 0;
       padding: 72px 14px calc(80px + env(safe-area-inset-bottom, 0));
     }
     .page-header { margin-bottom: 20px; }
@@ -483,49 +454,20 @@
 ══════════════════════════════════════════════════════════════════ -->
 <div id="app">
 
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-
-  <!-- SIDEBAR -->
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-logo">⚡ HireFlow <span>HR Recruitment Portal</span></div>
-    <div class="sidebar-nav">
-      <div class="nav-section">Main</div>
-      <div class="nav-item active" onclick="showPage('dashboard')">
-        <div class="nav-item-left">📊 Dashboard</div>
-      </div>
-      <div class="nav-item" onclick="showPage('candidates')">
-        <div class="nav-item-left">👤 Candidates</div>
-        <span class="nav-badge" id="nb-candidates">0</span>
-      </div>
-      <div class="nav-item" onclick="showPage('vacancies')">
-        <div class="nav-item-left">💼 Vacancies</div>
-        <span class="nav-badge green" id="nb-vacancies">0</span>
-      </div>
-      <div class="nav-section">Planning</div>
-      <div class="nav-item" onclick="showPage('interviews')">
-        <div class="nav-item-left">📅 Interviews</div>
-        <span class="nav-badge" id="nb-interviews" style="display:none">0</span>
-      </div>
-      <div class="nav-item" onclick="showPage('joining')">
-        <div class="nav-item-left">✅ Joinings</div>
-        <span class="nav-badge green" id="nb-joining" style="display:none">0</span>
-      </div>
+  <header class="app-header">
+    <div class="app-logo">⚡ HireFlow</div>
+    <nav class="top-nav" aria-label="Main navigation">
+      <button class="top-nav-item active" type="button" data-page="dashboard" onclick="showPage('dashboard')">📊 Dashboard</button>
+      <button class="top-nav-item" type="button" data-page="candidates" onclick="showPage('candidates')">👤 Candidates</button>
+      <button class="top-nav-item" type="button" data-page="vacancies" onclick="showPage('vacancies')">💼 Vacancies</button>
+      <button class="top-nav-item" type="button" data-page="interviews" onclick="showPage('interviews')">📅 Interviews</button>
+      <button class="top-nav-item" type="button" data-page="joining" onclick="showPage('joining')">✅ Joinings</button>
+    </nav>
+    <div class="header-page-title" id="mobile-page-title">Dashboard</div>
+    <div class="app-header-right">
+      <span class="header-user" id="hr-name">HR Portal</span>
+      <button class="logout-btn-header" type="button" onclick="doLogout()">Logout</button>
     </div>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar" id="user-avatar">H</div>
-        <div class="user-details">
-          <div class="user-email" id="hr-name">HR Portal</div>
-          <div class="user-role">HR Administrator</div>
-        </div>
-      </div>
-      <button class="logout-btn" onclick="doLogout()">🚪 Sign Out</button>
-    </div>
-  </nav>
-
-  <header class="mobile-header">
-    <button class="menu-btn" type="button" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
-    <div class="mobile-header-title" id="mobile-page-title">Dashboard</div>
   </header>
 
   <!-- MAIN -->
@@ -948,15 +890,13 @@ async function loadAllData() {
 }
 
 function showAppShell(email) {
-  const initial = (email || 'H').split('@')[0].slice(0, 1).toUpperCase();
-  document.getElementById('user-avatar').textContent = initial;
-  document.getElementById('hr-name').textContent = email;
+  document.getElementById('hr-name').textContent = email || 'HR Portal';
+  document.getElementById('hr-name').title = email || '';
   document.getElementById('today-date').textContent =
     new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   loadDashboard();
-  updateSidebarBadges();
 }
 
 // ── HELPERS: dates ────────────────────────────────────────────────
@@ -1042,31 +982,18 @@ const PAGE_TITLES = {
   joining: 'Joinings',
 };
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebar-overlay').classList.toggle('open');
-}
-
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('open');
-}
-
 function showPage(id) {
   _currentPage = id;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.top-nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.bottom-nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const match = [...document.querySelectorAll('.nav-item')].find(
-    n => n.getAttribute('onclick')?.includes("'" + id + "'")
-  );
-  if (match) match.classList.add('active');
+  const topMatch = document.querySelector(`.top-nav-item[data-page="${id}"]`);
+  if (topMatch) topMatch.classList.add('active');
   const bottomMatch = document.querySelector(`.bottom-nav-item[data-page="${id}"]`);
   if (bottomMatch) bottomMatch.classList.add('active');
   const titleEl = document.getElementById('mobile-page-title');
   if (titleEl) titleEl.textContent = PAGE_TITLES[id] || id;
-  closeSidebar();
 
   if (id === 'dashboard')  { loadDashboard(); }
   if (id === 'candidates') { updateVacancyFilterDropdown(); renderCandidates(); }
@@ -1084,22 +1011,6 @@ function refreshActivePage() {
   if (id === 'joining')    { renderJoining(); }
 }
 
-function updateSidebarBadges() {
-  const intCount  = upcomingInterviewCount();
-  const joinCount = candidates.filter(c => c.status === 'Selected' && !c.joiningConfirmed).length;
-
-  document.getElementById('nb-candidates').textContent = candidates.length;
-  document.getElementById('nb-vacancies').textContent  = vacancies.filter(v => v.status === 'Open').length;
-
-  const intBadge  = document.getElementById('nb-interviews');
-  const joinBadge = document.getElementById('nb-joining');
-  intBadge.textContent    = intCount;
-  intBadge.style.display  = intCount  ? '' : 'none';
-  joinBadge.textContent   = joinCount;
-  joinBadge.style.display = joinCount ? '' : 'none';
-}
-
-// ── DASHBOARD ─────────────────────────────────────────────────────
 function loadDashboard() {
   document.getElementById('s-total').textContent      = candidates.length;
   document.getElementById('s-vacancies').textContent  = vacancies.filter(v => v.status === 'Open').length;
@@ -1373,7 +1284,6 @@ function confirmJoining(id) {
     .then(async () => {
       await loadAllData();
       refreshActivePage();
-      updateSidebarBadges();
       const updated = candidates.find(x => x._id === id);
       showToast(`${updated?.name || c.name}'s joining confirmed!`, 'success');
     })
@@ -1500,7 +1410,6 @@ async function saveCandidate() {
     await loadAllData();
     closeModal('modal-candidate');
     refreshActivePage();
-    updateSidebarBadges();
     showToast(id ? 'Candidate updated successfully!' : 'Candidate added successfully!', 'success');
   } catch (e) {
     showToast(e.message, 'error');
@@ -1518,7 +1427,6 @@ async function deleteCandidate(id) {
     await api('/candidates?id=' + encodeURIComponent(id), { method: 'DELETE' });
     await loadAllData();
     refreshActivePage();
-    updateSidebarBadges();
     showToast('Candidate deleted', 'success');
   } catch (e) {
     showToast(e.message, 'error');
@@ -1590,7 +1498,6 @@ async function saveVacancy() {
     await loadAllData();
     closeModal('modal-vacancy');
     refreshActivePage();
-    updateSidebarBadges();
   } catch (e) {
     showToast(e.message, 'error');
   } finally {
@@ -1612,7 +1519,6 @@ async function deleteVacancy(id) {
     await api('/vacancies?id=' + encodeURIComponent(id), { method: 'DELETE' });
     await loadAllData();
     refreshActivePage();
-    updateSidebarBadges();
     showToast('Vacancy deleted', 'success');
   } catch (e) {
     showToast(e.message, 'error');
@@ -1686,11 +1592,10 @@ document.querySelectorAll('.modal-backdrop').forEach(el =>
   el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); })
 );
 
-// Escape key closes open modals and sidebar
+// Escape key closes open modals
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     document.querySelectorAll('.modal-backdrop.open').forEach(el => closeModal(el.id));
-    closeSidebar();
   }
 });
 
