@@ -3,6 +3,7 @@ const nextConfig = {
   images: {
     domains: ['res.cloudinary.com'],
   },
+  // Deployed: production build
 };
 
 module.exports = nextConfig;
