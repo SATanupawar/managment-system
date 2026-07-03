@@ -984,11 +984,16 @@ async function doLogin() {
   btn.textContent = 'Signing in…';
   btn.disabled = true;
 
+  const prevToken = TOKEN;
+  TOKEN = null;
+
   try {
     const data = await api('/login', {
       method: 'POST',
       body: { username: email, password: pwd },
     });
+
+    if (!data.token) throw new Error('Login failed — no token received. Restart the server and try again.');
 
     TOKEN = data.token;
     localStorage.setItem('hf_token', TOKEN);
@@ -998,6 +1003,7 @@ async function doLogin() {
     showAppShell(data.username || email);
     showToast('Signed in successfully!', 'success');
   } catch (e) {
+    TOKEN = prevToken;
     errEl.textContent = '⚠ ' + e.message;
     errEl.style.display = 'block';
   } finally {

@@ -10,10 +10,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    if (
-      username === process.env.HR_USERNAME &&
-      password === process.env.HR_PASSWORD
-    ) {
+    const envUser = (process.env.HR_USERNAME || '').trim();
+    const envPass = process.env.HR_PASSWORD || '';
+
+    if (String(username).trim() === envUser && password === envPass) {
       const token = signToken({ username, role: 'hr' });
       return res.status(200).json({ token, username });
     }
