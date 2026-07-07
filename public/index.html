@@ -529,6 +529,9 @@
           <option>Interview Scheduled</option><option>Interviewed</option>
           <option>Selected</option><option>Rejected</option><option>On Hold</option>
         </select>
+        <select class="filter-select" id="cand-position-filter" onchange="filterCandidates()">
+          <option value="">All Positions</option>
+        </select>
         <select class="filter-select" id="cand-vacancy-filter" onchange="filterCandidates()">
           <option value="">All Vacancies</option>
         </select>
@@ -684,9 +687,9 @@
         <hr class="modal-divider"/>
         <span class="section-label">📄 Resume / CV</span>
         <div class="file-drop" id="file-drop" onclick="document.getElementById('cv-file').click()">
-          📄 Click to upload CV (PDF / DOC, max 10 MB)
+          📄 Click to upload CV (PDF / Word, max 10 MB)
         </div>
-        <input type="file" id="cv-file" accept=".pdf,application/pdf" style="display:none" onchange="handleFileSelect(this)"/>
+        <input type="file" id="cv-file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="handleFileSelect(this)"/>
         <div id="current-cv" style="margin-top:8px;font-size:13px;color:var(--muted);display:none"></div>
       </div>
     </div>
@@ -804,6 +807,26 @@ function hasCV(c) {
   return !!(c.resumePublicId || c.resumeUrl || c.resumeDownloadUrl);
 }
 
+const CV_ALLOWED_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+const CV_ALLOWED_EXT = ['.pdf', '.doc', '.docx'];
+
+function isAllowedCvFile(file) {
+  if (!file) return false;
+  const name = file.name.toLowerCase();
+  const okExt = CV_ALLOWED_EXT.some(ext => name.endsWith(ext));
+  const okType = !file.type || CV_ALLOWED_TYPES.includes(file.type);
+  return okExt || okType;
+}
+
+function cvDownloadName(c) {
+  if (c.resumeFileName) return c.resumeFileName;
+  return `${(c.name || 'Candidate').replace(/\s+/g, '_')}_CV.pdf`;
+}
+
 async function downloadCV(id) {
   const c = candidates.find(x => x._id === id);
   if (!c || !hasCV(c)) { showToast('No CV uploaded for this candidate', 'error'); return; }
@@ -822,16 +845,16 @@ async function downloadCV(id) {
       return;
     }
 
-    // Check Content-Type — make sure we received a PDF, not an error page
     const ct = resp.headers.get('content-type') || '';
-    if (!ct.includes('pdf') && !ct.includes('octet')) {
+    const validTypes = ['pdf', 'msword', 'wordprocessingml', 'octet'];
+    if (!validTypes.some(t => ct.includes(t))) {
       showToast('Received invalid file from server. Please re-upload the CV.', 'error');
       return;
     }
 
     const blob = await resp.blob();
     const blobUrl = URL.createObjectURL(blob);
-    const filename = c.resumeFileName || `${(c.name || 'Candidate').replace(/\s+/g, '_')}_CV.pdf`;
+    const filename = cvDownloadName(c);
     const a = document.createElement('a');
     a.href = blobUrl;
     a.download = filename;
@@ -996,7 +1019,7 @@ function showPage(id) {
   if (titleEl) titleEl.textContent = PAGE_TITLES[id] || id;
 
   if (id === 'dashboard')  { loadDashboard(); }
-  if (id === 'candidates') { updateVacancyFilterDropdown(); renderCandidates(); }
+  if (id === 'candidates') { updateVacancyFilterDropdown(); updatePositionFilterDropdown(); renderCandidates(); }
   if (id === 'vacancies')  { renderVacancies(); }
   if (id === 'interviews') { renderInterviews(); }
   if (id === 'joining')    { renderJoining(); }
@@ -1005,7 +1028,7 @@ function showPage(id) {
 function refreshActivePage() {
   const id = _currentPage;
   if (id === 'dashboard')  { loadDashboard(); }
-  if (id === 'candidates') { updateVacancyFilterDropdown(); renderCandidates(); }
+  if (id === 'candidates') { updateVacancyFilterDropdown(); updatePositionFilterDropdown(); renderCandidates(); }
   if (id === 'vacancies')  { renderVacancies(); }
   if (id === 'interviews') { renderInterviews(); }
   if (id === 'joining')    { renderJoining(); }
@@ -1068,13 +1091,28 @@ function updateVacancyFilterDropdown() {
     ).join('');
 }
 
+function updatePositionFilterDropdown() {
+  const sel = document.getElementById('cand-position-filter');
+  if (!sel) return;
+  const cur = sel.value;
+  const positions = [...new Set(
+    candidates.map(c => (c.position || '').trim()).filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">All Positions</option>' +
+    positions.map(p =>
+      `<option value="${esc(p)}" ${p === cur ? 'selected' : ''}>${esc(p)}</option>`
+    ).join('');
+}
+
 function getFilteredCandidates() {
-  const q      = (document.getElementById('cand-search')?.value || '').toLowerCase();
-  const status = document.getElementById('cand-status-filter')?.value || '';
-  const vacId  = document.getElementById('cand-vacancy-filter')?.value || '';
+  const q        = (document.getElementById('cand-search')?.value || '').toLowerCase();
+  const status   = document.getElementById('cand-status-filter')?.value || '';
+  const position = document.getElementById('cand-position-filter')?.value || '';
+  const vacId    = document.getElementById('cand-vacancy-filter')?.value || '';
   return candidates.filter(c =>
     (!q || c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.position.toLowerCase().includes(q)) &&
     (!status || c.status === status) &&
+    (!position || c.position === position) &&
     (!vacId  || getVacancyId(c) === vacId)
   );
 }
@@ -1166,6 +1204,7 @@ function viewVacancyCandidates(vacancyId, title) {
   showPage('candidates');
   document.getElementById('cand-vacancy-filter').value = vacancyId;
   document.getElementById('cand-status-filter').value  = '';
+  document.getElementById('cand-position-filter').value = '';
   document.getElementById('cand-search').value         = '';
   renderCandidates();
   showToast(`Showing candidates for: ${title}`, 'success');
@@ -1308,7 +1347,7 @@ function openAddCandidate() {
   document.getElementById('cand-int-time').value = '';
   document.getElementById('cand-int-mode').value = 'In-Person';
   document.getElementById('cand-join-date').value = '';
-  document.getElementById('file-drop').innerHTML = '📄 Click to upload CV (PDF / DOC, max 10 MB)';
+  document.getElementById('file-drop').innerHTML = '📄 Click to upload CV (PDF / Word, max 10 MB)';
   document.getElementById('file-drop').classList.remove('has-file');
   document.getElementById('current-cv').style.display = 'none';
   document.getElementById('cv-file').value = '';
@@ -1338,7 +1377,7 @@ function editCandidate(id) {
   if (hasCV(c)) {
     document.getElementById('current-cv').style.display = 'block';
     document.getElementById('current-cv').innerHTML =
-      `Current CV: <button type="button" class="btn btn-sm btn-outline" onclick="downloadCV('${c._id}')">⬇ Download PDF</button>`;
+      `Current CV: <button type="button" class="btn btn-sm btn-outline" onclick="downloadCV('${c._id}')">⬇ Download CV</button>`;
   } else {
     document.getElementById('current-cv').style.display = 'none';
   }
@@ -1395,8 +1434,8 @@ async function saveCandidate() {
 
   const cvFile = document.getElementById('cv-file').files[0];
   if (cvFile) {
-    if (cvFile.type && cvFile.type !== 'application/pdf') {
-      showToast('Only PDF files are allowed for CV upload.', 'error');
+    if (!isAllowedCvFile(cvFile)) {
+      showToast('Only PDF or Word files (.pdf, .doc, .docx) are allowed.', 'error');
       return;
     }
     formData.append('resume', cvFile);
@@ -1529,6 +1568,11 @@ async function deleteVacancy(id) {
 function handleFileSelect(input) {
   const file = input.files[0];
   if (!file) return;
+  if (!isAllowedCvFile(file)) {
+    showToast('Only PDF or Word files (.pdf, .doc, .docx) are allowed.', 'error');
+    input.value = '';
+    return;
+  }
   if (file.size > 10 * 1024 * 1024) {
     showToast('File too large! Maximum 10 MB allowed.', 'error');
     input.value = '';

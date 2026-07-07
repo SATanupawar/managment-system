@@ -1,7 +1,12 @@
 import connectDB from '../../lib/mongodb';
 import { Candidate } from '../../lib/models';
 import { authMiddleware } from '../../lib/auth';
-import { getAuthenticatedDownloadUrl, buildResumeFileName } from '../../lib/cloudinary';
+import {
+  getAuthenticatedDownloadUrl,
+  buildResumeFileName,
+  getResumeContentType,
+  isValidCvBuffer,
+} from '../../lib/cloudinary';
 import https from 'https';
 import http from 'http';
 
@@ -64,17 +69,16 @@ export default async function handler(req, res) {
 
     const { buffer, status } = await fetchUrl(signedUrl);
 
-    // Validate we got an actual PDF (magic bytes %PDF)
-    if (buffer.length < 4 || buffer.slice(0, 4).toString('ascii') !== '%PDF') {
+    if (!isValidCvBuffer(buffer, filename)) {
       const preview = buffer.slice(0, 300).toString('utf8');
-      console.error(`[download-cv] Non-PDF content (HTTP ${status}). Preview:`, preview);
+      console.error(`[download-cv] Invalid CV content (HTTP ${status}). Preview:`, preview);
       return res.status(502).json({
         error: 'The stored CV file is corrupted or inaccessible. Please re-upload the CV.',
       });
     }
 
     const safeFilename = filename.replace(/"/g, '\\"');
-    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Type', getResumeContentType(filename));
     res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
     res.setHeader('Content-Length', buffer.length);
     res.setHeader('Cache-Control', 'no-store');
