@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="theme-color" content="#f0f4ff"/>
+<meta name="theme-color" content="#000000"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="HireFlow"/>
+<meta name="application-name" content="HireFlow"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="manifest" href="/site.webmanifest"/>
 <title>HireFlow — HR Recruitment System</title>
 <style>
   :root {
@@ -48,7 +56,8 @@
     padding: 48px 44px; width: 420px; max-width: 95vw;
     box-shadow: 0 20px 60px rgba(99,102,241,.15);
   }
-  .login-logo { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px; letter-spacing: -1px; }
+  .login-logo { margin-bottom: 8px; text-align: center; }
+  .login-logo img { width: 88px; height: 88px; object-fit: contain; display: block; margin: 0 auto 8px; border-radius: 18px; background: #000; }
   .login-sub  { color: var(--muted); margin-bottom: 32px; font-size: 14px; }
   .field-label { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 6px; display: block; }
   .field-input {
@@ -79,8 +88,11 @@
     box-shadow: 0 2px 8px rgba(0,0,0,.04);
   }
   .app-logo {
-    font-size: 17px; font-weight: 800; flex-shrink: 0;
-    background: linear-gradient(135deg, #6366f1, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    flex-shrink: 0; display: flex; align-items: center;
+  }
+  .app-logo img {
+    height: 40px; width: 40px; object-fit: contain; display: block;
+    border-radius: 10px; background: #000;
   }
   .top-nav {
     display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center;
@@ -434,7 +446,7 @@
 ══════════════════════════════════════════════════════════════════ -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">⚡ HireFlow</div>
+    <div class="login-logo"><img src="/hireflow-logo.png" alt="HireFlow"/></div>
     <div class="login-sub">HR Recruitment Management System</div>
     <div class="error-msg" id="login-error"></div>
     <div class="field-group">
@@ -455,7 +467,7 @@
 <div id="app">
 
   <header class="app-header">
-    <div class="app-logo">⚡ HireFlow</div>
+    <div class="app-logo"><img src="/hireflow-logo.png" alt="HireFlow"/></div>
     <nav class="top-nav" aria-label="Main navigation">
       <button class="top-nav-item active" type="button" data-page="dashboard" onclick="showPage('dashboard')">📊 Dashboard</button>
       <button class="top-nav-item" type="button" data-page="candidates" onclick="showPage('candidates')">👤 Candidates</button>
